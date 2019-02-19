@@ -163,11 +163,11 @@ int main(int argc, char **argv)
 		
 		
 		//处理图片
-		imageProcess();
-		
-		// 然后显示彩色图像
-		imshow( "Color Image", cImageBGR );
-		
+        imageProcess();
+
+        // 然后显示彩色图像
+        imshow( "Color Image", cImageBGR );
+
 		//cout<<"okokokok"<<endl;
 			
 		char c = waitKey(30);
