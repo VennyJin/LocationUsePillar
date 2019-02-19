@@ -80,7 +80,7 @@ void fitPlane(const cv::Mat &points, float planeCof[4]){
     cv::Mat A,W,U,V;
     //cv::gemm(points2,points,1,NULL,0,A,CV_GEMM_A_T);
 	//GEMM_1_T第一个矩阵转置
-	cv::gemm(points2,points,1,NULL,0,A,GEMM_1_T);
+    cv::gemm(points2,points,1,10,0,A,GEMM_1_T);
     SVD::compute(A,W,U,V);
 
 	
@@ -146,7 +146,7 @@ void dataAdjustToGuard( Mat & Ximg, Mat &Yimg, Mat &Zimg,Mat & Dimg,Mat &result)
 		float *xData=Ximg.ptr<float>(y);
 		float *yData=Yimg.ptr<float>(y);
 		float *zData=Zimg.ptr<float>(y);
-		float *dData=Dimg.ptr<float>(y);
+        float *dData=Dimg.ptr<float>(y);
 		
 		for(int x=0;x<cols;x++)
 		{
@@ -161,8 +161,8 @@ void dataAdjustToGuard( Mat & Ximg, Mat &Yimg, Mat &Zimg,Mat & Dimg,Mat &result)
 	}
 	Rect roi(0,0,3,pointNum);
 	result=iniPoints(roi);
-	
 }
+
 void dataAdjustToPillar(cv::Mat & Ximg, cv::Mat &Yimg,cv:: Mat &Zimg,std::vector<Point3f>& points)
 {
 	int rows=Ximg.rows;
@@ -354,7 +354,7 @@ void fit3DPillar(Mat &pillarMask)
 		int maxContoursX=-1;
 		int minContoursY=9999;
 		int maxContoursY=-1;
-		for(int i=0;i<contours_Points.size();i++)
+        for(size_t i=0;i<contours_Points.size();i++)
 		{
 			if(contours_Points[i].x<minContoursX)
 			{
@@ -483,7 +483,7 @@ void fit3DGuard(Mat &guardMask)
 		int maxContoursX=-1;
 		int minContoursY=9999;
 		int maxContoursY=-1;
-		for(int i=0;i<contours_Points.size();i++)
+        for(size_t i=0;i<contours_Points.size();i++)
 		{
 			if(contours_Points[i].x<minContoursX)
 			{
@@ -510,7 +510,7 @@ void fit3DGuard(Mat &guardMask)
 		//少计算一些点
 		int cenContoursX=(minContoursX+maxContoursX)/2;
 		int cenContoursY=(maxContoursY+minContoursY)/2;
-		int guardFitBoxWidth=min(20,cenContoursX-minContoursX);
+		int guardFitBoxWidth=min(100,cenContoursX-minContoursX);
 		int guardFitBoxHeight=min(20,cenContoursY-minContoursY);
 		Rect guardBox=Rect(cenContoursX-guardFitBoxWidth/2,cenContoursY-guardFitBoxHeight/2,guardFitBoxWidth,guardFitBoxHeight);
 		
@@ -526,7 +526,8 @@ void fit3DGuard(Mat &guardMask)
 		//显示处理的区域
 		Mat tmpSrcImage=g_src_img.clone();
 		rectangle(tmpSrcImage,Point(guardBox.x,guardBox.y),Point(guardBox.x+guardBox.width,guardBox.y+guardBox.height),Scalar(0,255,0),1,8,0);
-		dataAdjustToGuard(guardRoiImage[0],guardRoiImage[1],guardRoiImage[2],guardRoiImage[3],guard_points);
+
+        dataAdjustToGuard(guardRoiImage[0],guardRoiImage[1],guardRoiImage[2],guardRoiImage[3],guard_points);
 		
 		
 		imshow("拟合挡板",tmpSrcImage);
@@ -534,11 +535,20 @@ void fit3DGuard(Mat &guardMask)
 			return;
 		//cout<<"拟合宽度： "<<guardFitBoxWidth<<"拟合高度 "<<guardFitBoxHeight<<endl;
 		
+		//更新坐标数据
+		UpdateGuardPoints(guard_points);
+		
 		//cout<<"开始拟合挡板"<<endl;
 		//拟合方程
-		float guardParameters[4];
+		//float guardParameters[4];
 		//fit3DGuard(guard_points,guardParameters);
-		fitPlane(guard_points, guardParameters);
-		cout<<"挡板方程： "<<guardParameters[0]<<" "<<guardParameters[1]<<"  "<<guardParameters[2]<<"  "<<guardParameters[3]<<endl;
+		fitPlane(guard_points, g_guardEquation);
+		cout<<"挡板方程： "<<g_guardEquation[0]<<" "<<g_guardEquation[1]<<"  "<<g_guardEquation[2]<<"  "<<g_guardEquation[3]<<endl;
+		
+		calRotationMatrixbyGuard();
+	
+		cout<<"旋转矩阵2"<<rotationMatrixCameraToGuard_pie<<endl;
+
+        UpdateGuardPoints_Final(guard_points);
 	}
 }

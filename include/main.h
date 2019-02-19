@@ -59,11 +59,13 @@ extern Mat g_dist_image;
 extern float g_groundEquation[4];
 extern float g_guardEquation[4];
 //相机姿态角
-extern double g_pitch;  //绕x轴
-extern double g_yaw;  //绕y轴 
-extern double g_roll;  //绕z轴
+//extern double g_pitch;  //绕x轴
+//extern double g_yaw;  //绕y轴 
+//extern double g_roll;  //绕z轴
 
-
+//相机平面到地面的旋转矩阵
+extern Mat rotateMatrixCameraToGround;
+extern Mat rotationMatrixCameraToGuard_pie;
 #ifdef SAVEVIDEO
 //保存视频
 extern VideoWriter rgbWriter;

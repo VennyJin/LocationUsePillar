@@ -164,10 +164,24 @@ void imageProcess()
 	if(groundFit()==true)
 	{
 		
-		//计算部分姿态角，未计算roll;
+        calRotationMatrixbyGround();
+        cout<<"旋转矩阵1"<<rotateMatrixCameraToGround<<endl;
+		//测试旋转矩阵转过，取地面的ROI
+		/*Rect ground_tmpArea(160,180,50,50);
+		//显示一下
+		Mat tmp_test=g_src_img(ground_tmpArea);
+		Mat tmp_x_img=g_x_img(ground_tmpArea);
+		Mat tmp_y_img=g_y_img(ground_tmpArea);
+		Mat tmp_z_img=g_z_img(ground_tmpArea);
+		Mat tmp_rotate_ground_points=Mat ::zeros(3,tmp_x_img.rows*tmp_x_img.cols,CV_32FC1);
 		
 		
-		calPYRbyGround();
+		
+		
+		
+		UpdateCameraCoordinate(tmp_x_img,tmp_y_img,tmp_z_img,tmp_rotate_ground_points);
+		imshow("test_r",tmp_test);  */
+		
 		//cout<<"A: "<<g_groundEquation[0]<<" B: "<<g_groundEquation[1]<<" C: "<<g_groundEquation[2]<<" D: "<<g_groundEquation[3]<<endl;
 		//计算到地面的距离
 		calDistanceToGround(g_dist_image);
@@ -176,9 +190,8 @@ void imageProcess()
 		calSegDistMat(pillorMask,400,1200,3000,4000);
 		fit3DPillar(pillorMask);
 		
-		calSegDistMat(guardMask,60,100,1800,2500);
-		fit3DGuard(guardMask);
-		
+		calSegDistMat(guardMask,60,100,1800,2500);	
+		fit3DGuard(guardMask);	
 		
 	}
 	

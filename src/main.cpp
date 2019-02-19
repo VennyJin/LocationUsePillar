@@ -20,11 +20,19 @@ float g_groundEquation[4];  //分别存储A  B   C   D
 float g_guardEquation[4];
 
 //相机姿态角
-double g_pitch=0.0;  //绕x轴
-double g_yaw=0.0;  //绕y轴 
-double g_roll=0.0;  //绕z轴
+//double g_pitch=0.0;  //绕x轴
+//double g_yaw=0.0;  //绕y轴 
+//double g_roll=0.0;  //绕z轴
 
 
+//测试数据
+Mat g_x_img_test=Mat::zeros(IMAGE_Y,IMAGE_X,CV_32FC1);
+Mat g_y_img_test=Mat::zeros(IMAGE_Y,IMAGE_X,CV_32FC1);
+Mat g_z_img_test=Mat::zeros(IMAGE_Y,IMAGE_X,CV_32FC1);
+
+Mat rotateMatrixCameraToGround =Mat ::zeros(3,3,CV_32FC1);
+Mat rotationMatrixCameraToGuard_pie=Mat ::zeros(3,3,CV_32FC1);
+Mat rotateMatrixCameraToWorld=Mat::zeros(3,3,CV_32FC1);
 const int cdepthwidth = 320;
 const int cdepthheight = 240;
 const int ccolorwidth = 320;
@@ -163,11 +171,11 @@ int main(int argc, char **argv)
 		
 		
 		//处理图片
-        imageProcess();
-
-        // 然后显示彩色图像
-        imshow( "Color Image", cImageBGR );
-
+		imageProcess();
+		
+		// 然后显示彩色图像
+		imshow( "Color Image", cImageBGR );
+		
 		//cout<<"okokokok"<<endl;
 			
 		char c = waitKey(30);
