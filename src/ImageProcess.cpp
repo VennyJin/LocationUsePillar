@@ -79,8 +79,8 @@ bool groundFit()
 		pitchGround=acos(abs(g_groundEquation[1]))/pi*180 ;
 		
 	}	*/
-	
-	for(int i=0;i<maxIterNum;i++)
+	for(int i=0;i<1;i++)
+	//for(int i=0;i<maxIterNum;i++)
 	{
 		iterNum++;
 		
@@ -128,7 +128,9 @@ bool groundFit()
 	dataAdjustToMat(fitGroundPoints[0],fitGroundPoints[1],fitGroundPoints[2],adjustedFitGroundPoints);
 	fitPlane(adjustedFitGroundPoints,g_groundEquation);
 	
-	
+#ifdef  WRITEPARAMETERS
+GroundPlaneParameterFile<<g_groundEquation[0]<<" "<<g_groundEquation[1]<<" "<<g_groundEquation[2]<<" "<<g_groundEquation[3]<<endl;
+#endif
 	
 	//cout<<"pitch:  "<<minPitch<<endl;
 		//显示
@@ -153,45 +155,52 @@ bool groundFit()
 
 void imageProcess()
 {
-//	double start = static_cast<double>(cvGetTickCount());
+	double start = static_cast<double>(cvGetTickCount());
 	//获得点云数据
 	getMapData();
 	
 	Mat pillorMask=Mat::zeros(IMAGE_Y,IMAGE_X,CV_8UC1);
 	Mat guardMask=Mat::zeros(IMAGE_Y,IMAGE_X,CV_8UC1);
 	//拟合地面
-	
+	bool isFindPillar=false;
+	bool isFindGuard=false;
+
 	if(groundFit()==true)
 	{
 		
-        calRotationMatrixbyGround();
-        cout<<"旋转矩阵1"<<rotateMatrixCameraToGround<<endl;
-		//测试旋转矩阵转过，取地面的ROI
-		/*Rect ground_tmpArea(160,180,50,50);
-		//显示一下
-		Mat tmp_test=g_src_img(ground_tmpArea);
-		Mat tmp_x_img=g_x_img(ground_tmpArea);
-		Mat tmp_y_img=g_y_img(ground_tmpArea);
-		Mat tmp_z_img=g_z_img(ground_tmpArea);
-		Mat tmp_rotate_ground_points=Mat ::zeros(3,tmp_x_img.rows*tmp_x_img.cols,CV_32FC1);
 		
+		//计算部分姿态角，未计算roll;
 		
-		
-		
-		
-		UpdateCameraCoordinate(tmp_x_img,tmp_y_img,tmp_z_img,tmp_rotate_ground_points);
-		imshow("test_r",tmp_test);  */
-		
-		//cout<<"A: "<<g_groundEquation[0]<<" B: "<<g_groundEquation[1]<<" C: "<<g_groundEquation[2]<<" D: "<<g_groundEquation[3]<<endl;
+		calRotationMatrixbyGround();
+	
 		//计算到地面的距离
 		calDistanceToGround(g_dist_image);
 		//按照到地面的高度进行分割
 		
 		calSegDistMat(pillorMask,400,1200,3000,4000);
-		fit3DPillar(pillorMask);
+		isFindPillar=fit3DPillar(pillorMask);
 		
-		calSegDistMat(guardMask,60,100,1800,2500);	
-		fit3DGuard(guardMask);	
+	
+		
+		calSegDistMat(guardMask,100,500,1800,2500);
+		isFindGuard=fit3DGuard(guardMask);
+		if(isFindGuard==true)
+		{
+#ifdef WRITEPARAMETERS
+		GuardPlaneParameterFile<<g_guardEquation[0]<<" "<<g_guardEquation[1]<<" "<<g_guardEquation[2]<<" "<<g_guardEquation[3]<<endl;	
+#endif
+			calRotationMatrixbyGuard();
+			CalFullRotationMatrix();
+		}
+		
+		if(isFindPillar==true&&isFindGuard==true)
+		{
+			
+			CalCameraWorldCoordinate(0);
+			
+		}
+		//更新最后的数据，为了调试用的
+		//UpdateGuardPoints_Final(guard_points);
 		
 	}
 	
@@ -210,7 +219,7 @@ void imageProcess()
 		pillarWriter.write(pillorMask);
 
 #endif
-		//imshow("柱子",pillorMask);
+		imshow("柱子",pillorMask);
 		imshow("挡板",guardMask);
 	
 	

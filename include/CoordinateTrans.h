@@ -12,4 +12,8 @@ void UpdateCameraCoordinate(cv::Mat &xImage,cv::Mat &yImage,cv::Mat &zImage,cv::
 void UpdateGuardPoints(cv::Mat &guard_points);
 
 void UpdateGuardPoints_Final(cv::Mat &guardPoints);
+
+void CalFullRotationMatrix();
+
+void CalCameraWorldCoordinate(int pillarId);
 #endif

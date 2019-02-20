@@ -19,6 +19,10 @@ float g_groundEquation[4];  //分别存储A  B   C   D
 //挡板方程系数
 float g_guardEquation[4];
 
+//柱子相机坐标
+Point3f PillarCameralocation[3];
+
+Point3f PilarWorldlocation[3];
 //相机姿态角
 //double g_pitch=0.0;  //绕x轴
 //double g_yaw=0.0;  //绕y轴 
@@ -33,13 +37,15 @@ Mat g_z_img_test=Mat::zeros(IMAGE_Y,IMAGE_X,CV_32FC1);
 Mat rotateMatrixCameraToGround =Mat ::zeros(3,3,CV_32FC1);
 Mat rotationMatrixCameraToGuard_pie=Mat ::zeros(3,3,CV_32FC1);
 Mat rotateMatrixCameraToWorld=Mat::zeros(3,3,CV_32FC1);
-
 const int cdepthwidth = 320;
 const int cdepthheight = 240;
 const int ccolorwidth = 320;
 const int ccolorheight = 240;
 
 const int frame_num = 30;
+
+
+
 
 #ifdef SAVEVIDEO
 //保存视频
@@ -48,8 +54,13 @@ VideoWriter pillarWriter;
 #endif
 
 #ifdef SAVEONLYRESULT
-
 VideoWriter pillarWriter;
+#endif
+
+#ifdef  WRITEPARAMETERS
+ofstream PillarWorldLocationFile;
+ofstream GuardPlaneParameterFile;
+ofstream GroundPlaneParameterFile;
 #endif
 
 void on_mouse(int event,int x,int y,int flags,void *ustc)
@@ -82,7 +93,15 @@ int main(int argc, char **argv)
 	pillarWriter.open("./Pillar/"+nowTime2String()+".avi",CV_FOURCC('M','J','P','G'),30,Size(IMAGE_X,IMAGE_Y));
 
 	
-#endif 
+#endif
+
+
+#ifdef WRITEPARAMETERS
+	//输出柱子坐标
+	PillarWorldLocationFile.open("Pillar.txt");
+	GuardPlaneParameterFile.open("guard_plane.txt");
+	GroundPlaneParameterFile.open("ground_plane.txt");
+#endif
 	// Initialize OpenNI Environment
     OpenNI::initialize();
    // 声明并打开Device设备，我用的是Kinect。
@@ -111,9 +130,9 @@ int main(int argc, char **argv)
     mModeColor.setFps( frame_num );
     mModeColor.setPixelFormat( PIXEL_FORMAT_RGB888 );
 	
+	
     streamColor.setVideoMode( mModeColor);
-
-    auto camSetting =streamColor.getCameraSettings();
+	auto camSetting =streamColor.getCameraSettings();
 	camSetting->setAutoWhiteBalanceEnabled(true);
 	camSetting->setAutoExposureEnabled(true);
 	//camSetting->setExposure(70)!=openni::STATUS_OK;
@@ -129,7 +148,6 @@ int main(int argc, char **argv)
     streamColor.start();
 	
 	
-
 	Mat cImageBGR;
 	Mat mScaledDepth;
 
@@ -140,7 +158,7 @@ int main(int argc, char **argv)
     VideoFrameRef  frameDepth;
     VideoFrameRef  frameColor;
 	
-//	cout<<"initial okay"<<endl;
+	cout<<"initial okay"<<endl;
 	
 	 // 创建OpenCV图像窗口
 	namedWindow( "Depth Image" );
@@ -149,9 +167,8 @@ int main(int argc, char **argv)
 	
 	while(1)
 	{
-//		double start = static_cast<double>(cvGetTickCount());
-
-        streamDepth.readFrame( &frameDepth );
+		double start = static_cast<double>(cvGetTickCount());
+		streamDepth.readFrame( &frameDepth );
 		streamColor.readFrame( &frameColor );
 		
 		
@@ -182,12 +199,18 @@ int main(int argc, char **argv)
 		if (c == 'q') break;
 		
 		
-//		double time = ((double)cvGetTickCount() - start) / cvGetTickFrequency();
+		double time = ((double)cvGetTickCount() - start) / cvGetTickFrequency();
 		//cout << "所用时间为:" << time/1000 << "ms" << endl;
 	}
-	
+
+#ifdef WRITEPARAMETERS	
+	PillarWorldLocationFile.close();
+	GuardPlaneParameterFile.close();
+	GroundPlaneParameterFile.close();
+#endif
 	streamDepth.stop();
-    streamColor.stop();		
+    streamColor.stop();
+		
 	devAnyDevice.close();
 	
 	

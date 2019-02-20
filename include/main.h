@@ -40,7 +40,8 @@ using namespace openni;
 
 #define pi    3.14159265358979f
 
-
+//保存部分参数
+#define WRITEPARAMETERS
 //保存视频
 //#define SAVEVIDEO 1
 //#define SAVEONLYRESULT 1
@@ -65,14 +66,26 @@ extern float g_guardEquation[4];
 
 //相机平面到地面的旋转矩阵
 extern Mat rotateMatrixCameraToGround;
+extern Mat rotateMatrixCameraToWorld;
 extern Mat rotationMatrixCameraToGuard_pie;
+
+
+//柱子相机坐标
+extern Point3f PillarCameralocation[3];
+
+extern Point3f PilarWorldlocation[3];
+
 #ifdef SAVEVIDEO
 //保存视频
 extern VideoWriter rgbWriter;
 extern VideoWriter pillarWriter;
 #endif
 
-
+#ifdef WRITEPARAMETERS
+extern ofstream PillarWorldLocationFile;
+extern ofstream GuardPlaneParameterFile;
+extern ofstream GroundPlaneParameterFile;
+#endif
 #ifdef SAVEONLYRESULT
 //保存视频
 

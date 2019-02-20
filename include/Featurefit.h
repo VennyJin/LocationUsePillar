@@ -10,6 +10,6 @@ void dataAdjustToGuard( cv::Mat & Ximg, cv::Mat &Yimg,cv:: Mat &Zimg,cv::Mat & D
 void dataAdjustToPillar(cv::Mat & Ximg, cv::Mat &Yimg,cv:: Mat &Zimg,std::vector<cv::Point3f>& points);
 void calSegDistMat(cv::Mat &mask,float minHeight,float maxHeight,float minDepth,float maxDepth);
 void getMapData();
-void fit3DPillar(cv::Mat &pillarMask);
-void fit3DGuard(cv::Mat &guardMask);
+bool fit3DPillar(cv::Mat &pillarMask);
+bool fit3DGuard(cv::Mat &guardMask);
 #endif
