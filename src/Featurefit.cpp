@@ -222,7 +222,6 @@ void getMapData()
 	//double start = static_cast<double>(cvGetTickCount());
 	
 	//将深度信息存储到图片里
-	//cvtColor(g_dep_img,g_y_img,CV_32F);
 	g_dep_img.convertTo(g_z_img,CV_32F);
 	
 	for(int y=0;y<IMAGE_Y;y++)
@@ -235,18 +234,14 @@ void getMapData()
 		for(int x=0;x<IMAGE_X;x++)
 		{
 			xData[x]=-zData[x]*TanX/(IMAGE_X/2)*((IMAGE_X/2)-x);   //已经转成了右手系
-			yData[x]=zData[x]*TanY/(IMAGE_Y/2)*((IMAGE_Y/2)-y);
-			
-			//xData[x]=getXCameraCoordinate(zData[x],x);
-			//yData[x]=getYCameraCoordinate(zData[x],y);
+			yData[x]=zData[x]*TanY/(IMAGE_Y/2)*((IMAGE_Y/2)-y);			
 		}
 		
 	}
-	
-	
-	//double time = ((double)cvGetTickCount() - start) / cvGetTickFrequency();
-	//cout << "所用时间为:" << time/1000 << "ms" << endl;
-	
+
+    //double time = ((double)cvGetTickCount() - start) / cvGetTickFrequency();
+    //cout << "所用时间为:" << time/1000 << "ms" << endl;
+
 }
 
 //用于对轮廓排序

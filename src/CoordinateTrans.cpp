@@ -15,7 +15,7 @@ void MyRodrigues(vector<double> &r_vector,Mat &r_matrix)
     cout<<"cos "<<cos_theta<<endl;
 
     Mat cos_Matrix=Mat::eye(3,3,CV_64FC1).mul(Mat::eye(3,3,CV_64FC1),cos_theta);
-    Mat sin_Matrix=Mat::eye(3,3,CV_64FC1).mul(Mat::eye(3,3,CV_64FC1),sin_theta);
+//    Mat sin_Matrix=Mat::eye(3,3,CV_64FC1).mul(Mat::eye(3,3,CV_64FC1),sin_theta);
     Mat r_vector_m=Mat::zeros(3,1,CV_64FC1);
     Mat n_mul_n_T;
     Mat n_pie=Mat::zeros(3,3,CV_64FC1);

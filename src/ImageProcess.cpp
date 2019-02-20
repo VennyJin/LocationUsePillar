@@ -153,7 +153,7 @@ bool groundFit()
 
 void imageProcess()
 {
-	double start = static_cast<double>(cvGetTickCount());
+//	double start = static_cast<double>(cvGetTickCount());
 	//获得点云数据
 	getMapData();
 	

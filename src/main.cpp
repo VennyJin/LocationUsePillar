@@ -33,15 +33,13 @@ Mat g_z_img_test=Mat::zeros(IMAGE_Y,IMAGE_X,CV_32FC1);
 Mat rotateMatrixCameraToGround =Mat ::zeros(3,3,CV_32FC1);
 Mat rotationMatrixCameraToGuard_pie=Mat ::zeros(3,3,CV_32FC1);
 Mat rotateMatrixCameraToWorld=Mat::zeros(3,3,CV_32FC1);
+
 const int cdepthwidth = 320;
 const int cdepthheight = 240;
 const int ccolorwidth = 320;
 const int ccolorheight = 240;
 
 const int frame_num = 30;
-
-
-
 
 #ifdef SAVEVIDEO
 //保存视频
@@ -113,9 +111,9 @@ int main(int argc, char **argv)
     mModeColor.setFps( frame_num );
     mModeColor.setPixelFormat( PIXEL_FORMAT_RGB888 );
 	
-	
     streamColor.setVideoMode( mModeColor);
-	auto camSetting =streamColor.getCameraSettings();
+
+    auto camSetting =streamColor.getCameraSettings();
 	camSetting->setAutoWhiteBalanceEnabled(true);
 	camSetting->setAutoExposureEnabled(true);
 	//camSetting->setExposure(70)!=openni::STATUS_OK;
@@ -131,6 +129,7 @@ int main(int argc, char **argv)
     streamColor.start();
 	
 	
+
 	Mat cImageBGR;
 	Mat mScaledDepth;
 
@@ -141,7 +140,7 @@ int main(int argc, char **argv)
     VideoFrameRef  frameDepth;
     VideoFrameRef  frameColor;
 	
-	cout<<"initial okay"<<endl;
+//	cout<<"initial okay"<<endl;
 	
 	 // 创建OpenCV图像窗口
 	namedWindow( "Depth Image" );
@@ -150,8 +149,9 @@ int main(int argc, char **argv)
 	
 	while(1)
 	{
-		double start = static_cast<double>(cvGetTickCount());
-		streamDepth.readFrame( &frameDepth );
+//		double start = static_cast<double>(cvGetTickCount());
+
+        streamDepth.readFrame( &frameDepth );
 		streamColor.readFrame( &frameColor );
 		
 		
@@ -182,13 +182,12 @@ int main(int argc, char **argv)
 		if (c == 'q') break;
 		
 		
-		double time = ((double)cvGetTickCount() - start) / cvGetTickFrequency();
+//		double time = ((double)cvGetTickCount() - start) / cvGetTickFrequency();
 		//cout << "所用时间为:" << time/1000 << "ms" << endl;
 	}
 	
 	streamDepth.stop();
-    streamColor.stop();
-		
+    streamColor.stop();		
 	devAnyDevice.close();
 	
 	
